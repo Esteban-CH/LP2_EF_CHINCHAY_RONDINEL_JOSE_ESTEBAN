@@ -55,7 +55,7 @@ public class UsuarioController {
 	public String login(UsuarioEntity usuarioEntity, Model model, HttpSession session) {
 		boolean usuarioValido = usuarioService.validarUsuario(usuarioEntity, session);
 		if(usuarioValido) {
-			return "redirect:/menu";
+			return "redirect:/listado_Productos";
 		}
 		model.addAttribute("loginInvalido", "No existe el usuario");
 		model.addAttribute("usuario", new UsuarioEntity());
@@ -65,6 +65,6 @@ public class UsuarioController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
-		return "redirect:/";
+		return "redirect:/login";
 	}
 }
