@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -86,41 +87,31 @@ public class ProductoController {
 	
 	@GetMapping("/ver_producto/{id}")
     public String verProducto(@PathVariable("id") Integer id, Model model, HttpSession session) {
-        // Obtener el producto por su ID
         ProductoEntity producto = productoService.buscarProductoPorId(id);
         if (producto == null) {
-            // Manejar el caso donde el producto no existe
             return "redirect:/listado_Productos";
         }
         
         String correo = (String) session.getAttribute("usuario");
 	    UsuarioEntity usuario = usuarioService.buscarUsuarioPorCorreo(correo);
 	    model.addAttribute("usuario", usuario);
-
         model.addAttribute("producto", producto);
-
         return "Producto/Ver";
     }
 	
 	@GetMapping("/editar_producto/{id}")
     public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, HttpSession session) {
-        // Obtener el producto por su ID
         ProductoEntity producto = productoService.buscarProductoPorId(id);
         if (producto == null) {
-            // Manejar el caso donde el producto no existe
             return "redirect:/listado_Productos";
         }
         
         String correo = (String) session.getAttribute("usuario");
 	    UsuarioEntity usuario = usuarioService.buscarUsuarioPorCorreo(correo);
 	    model.addAttribute("usuario", usuario);
-
         model.addAttribute("producto", producto);
-
-        // Obtener lista de categorías para el formulario de edición
         List<CategoriaEntity> categorias = categoriaService.listarCategoria();
         model.addAttribute("categorias", categorias);
-
         return "Producto/Editar";
     }
 	
@@ -138,47 +129,26 @@ public class ProductoController {
 	
 	@GetMapping("/generar_pdf_productos")
 	public ResponseEntity<InputStreamResource> generarPdfProductos(HttpSession session) throws IOException {
-	    // Obtener lista de productos
-	    List<ProductoEntity> productos = productoService.listaproducto();
+	    String correo = (String) session.getAttribute("usuario");
+	    if (correo == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+	    UsuarioEntity usuario = usuarioService.buscarUsuarioPorCorreo(correo);
+	    if (usuario == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
 
-	    // Preparar datos para el PDF
+	    List<ProductoEntity> productos = productoService.listaproducto();
 	    Map<String, Object> datosPdf = new HashMap<>();
 	    datosPdf.put("productos", productos);
-
-	    // Obtener el nombre de usuario desde la sesión
-	    String nombreUsuario = (String) session.getAttribute("nombre_usuario");
-	    if (nombreUsuario == null) {
-	        nombreUsuario = "ESTEBANDIDO"; // Valor por defecto si no hay nombre de usuario en sesión
-	    }
-	    datosPdf.put("nombre_usuario", nombreUsuario);
-
-	    // Generar el PDF
+	    datosPdf.put("nombre_usuario", usuario.getNombre());
 	    ByteArrayInputStream pdfBytes = pdfService.generarPdfDeHtml("reporteProductos", datosPdf);
-
-	    // Configurar cabeceras HTTP para la respuesta
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.add("Content-Disposition", "inline; filename=productos.pdf");
-
-	    // Retornar la respuesta con el PDF generado
 	    return ResponseEntity.ok()
 	            .headers(headers)
 	            .contentType(MediaType.APPLICATION_PDF)
 	            .body(new InputStreamResource(pdfBytes));
 	}
-
-
-	private String obtenerNombreUsuarioDesdeSesion(HttpSession session) {
-        // Aquí debes implementar la lógica para obtener el nombre de usuario desde la sesión
-        // Por ejemplo, si guardaste el nombre de usuario con el atributo "nombre_usuario"
-        Object nombreUsuarioObj = session.getAttribute("nombre_usuario");
-        if (nombreUsuarioObj != null) {
-            return nombreUsuarioObj.toString();
-        } else {
-            return "Esteban"; // Puedes devolver un valor por defecto si no hay usuario en sesión
-        }
-    }
-
-
-
 
 }

@@ -4,37 +4,12 @@
     <meta charset="UTF-8">
     <title>Registrar Producto</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Estilo para el sidebar */
-        .sidebar {
-            position: fixed; /* Fija el sidebar en la página */
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px; /* Ancho del sidebar */
-            background-color: #f8f9fa;
-            padding: 20px;
-            overflow-x: hidden; /* Evita que el contenido se desborde horizontalmente */
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centra los elementos horizontalmente */
-            justify-content: space-between; /* Alinea los elementos de arriba a abajo */
-        }
-
-        /* Contenedor principal para el contenido de la página */
-        .content {
-            margin-left: 250px; /* Ajusta el margen izquierdo para dejar espacio para el sidebar */
-            padding: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="/CSS/Sidebar.css">
 </head>
 <body>
-<div class="sidebar">
-    <!-- Verificar que usuario no sea null antes de acceder a sus propiedades -->
-    <img th:if="${usuario != null}" th:src="@{'/EF_CHINCHAY/' + ${usuario.urlImagen}}" alt="User Image" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
-    <p>Bienvenido <span th:if="${usuario != null}" th:text="${usuario.nombre}"></span></p>
-    <a href="/logout" class="btn btn-danger mt-auto">Cerrar Sesión</a>
-</div>
+	
+	<div th:replace="/Sidebar :: Sidebar"></div>
+	
 <div class="content">
     <div class="container">
         <h2 class="mt-5 mb-4">Registrar Producto</h2>
