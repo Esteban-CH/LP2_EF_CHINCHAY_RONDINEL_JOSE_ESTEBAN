@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Producto</title>
+    <!-- Incluye Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/CSS/Sidebar.css">
+</head>
+<body>
+	
+	<div th:replace="/Sidebar :: Sidebar"></div>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Editar Producto</h2>
+        <form action="/actualizar_producto" method="post" th:object="${producto}" class="needs-validation" novalidate>
+            <input type="hidden" th:field="*{productoId}">
+            <div class="form-group">
+                <label for="nombreProducto">Nombre:</label>
+                <input type="text" id="nombreProducto" th:field="*{nombreProducto}" class="form-control" required>
+                <div class="invalid-feedback">
+                    Por favor, ingresa el nombre del producto.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="precio">Precio:</label>
+                <input type="number" id="precio" th:field="*{precio}" class="form-control" required>
+                <div class="invalid-feedback">
+                    Por favor, ingresa el precio del producto.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" th:field="*{stock}" class="form-control" required>
+                <div class="invalid-feedback">
+                    Por favor, ingresa el stock del producto.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" th:field="*{categoria.categoriaId}" class="form-control" required>
+                    <option th:each="cat : ${categorias}" th:value="${cat.categoriaId}" th:text="${cat.nombreCategoria}" th:selected="${cat.categoriaId == producto.categoria.categoriaId}"></option>
+                </select>
+                <div class="invalid-feedback">
+                    Por favor, selecciona una categoría.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a href="/listado_Productos" class="btn btn-secondary ml-2">Cancelar</a> <!-- Agregar botón Cancelar -->
+        </form>
+    </div>
+
+    <!-- Incluye jQuery y Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Script para validación de formulario -->
+    <script>
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+</html>

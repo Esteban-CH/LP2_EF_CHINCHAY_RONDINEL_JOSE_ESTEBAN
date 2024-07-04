@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ver Producto</title>
+    <!-- Incluye Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/CSS/Sidebar.css">
+</head>
+<body>
+
+	<div th:replace="/Sidebar :: Sidebar"></div>
+
+	
+    <div class="container mt-5">
+        <h2 class="mb-4">Detalles del Producto</h2>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" th:text="${producto.nombreProducto}">Nombre del Producto</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-text"><strong>Precio:</strong> <span th:text="${producto.precio}">Precio</span></p>
+                <p class="card-text"><strong>Stock:</strong> <span th:text="${producto.stock}">Stock</span></p>
+                <p class="card-text"><strong>Categoría:</strong> <span th:text="${producto.categoria.nombreCategoria}">Categoría</span></p>
+            </div>
+            <div class="card-footer">
+                <a href="/listado_Productos" class="btn btn-secondary">Regresar al Listado</a>
+                <form action="#" th:action="@{/eliminar_producto/{id}(id=${producto.productoId})}" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro que deseas eliminar este producto?');">
+                    <button type="submit" class="btn btn-danger">Eliminar Producto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incluye jQuery y Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
