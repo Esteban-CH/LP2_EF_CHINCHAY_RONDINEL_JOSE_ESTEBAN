@@ -20,17 +20,11 @@ public class UsuarioServiceImpl implements UsuarioService{
 	
 	@Override
 	public void crearUsuario(UsuarioEntity usuarioEntity, org.springframework.ui.Model model, MultipartFile foto) {
-		// guardar foto
 		String nombreFoto = Utilitarios.guardarImagen(foto);
 		usuarioEntity.setUrlImagen(nombreFoto);
-		
-		//Hash Password
 		String passwordHash = Utilitarios.extraerHash(usuarioEntity.getPassword());
-		usuarioEntity.setPassword(passwordHash);
-		
+		usuarioEntity.setPassword(passwordHash);	
 		usuarioRepository.save(usuarioEntity);
-		
-		// responder a la vista
 		model.addAttribute("registroCorrecto", "Registro Correcto");
 		model.addAttribute("usuario", new UsuarioEntity());
 	}
@@ -39,18 +33,14 @@ public class UsuarioServiceImpl implements UsuarioService{
 	public boolean validarUsuario(UsuarioEntity usuarioEntity, HttpSession session) {
 		UsuarioEntity usuarioEncontradoPorcCorreo = 
 				usuarioRepository.findByCorreo(usuarioEntity.getCorreo());
-		
-		// Correo existe?
 		if(usuarioEncontradoPorcCorreo == null) {
 			return false;
 		}
-		// validar si el password input hace match con password de base de datos
 		if(!Utilitarios.checkPassword(usuarioEntity.getPassword(), 
 				usuarioEncontradoPorcCorreo.getPassword())) {
 			return false;
 		}
 		session.setAttribute("usuario", usuarioEncontradoPorcCorreo.getCorreo());
-		
 		return true;
 	}
 

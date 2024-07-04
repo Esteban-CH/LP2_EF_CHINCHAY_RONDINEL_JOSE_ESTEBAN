@@ -35,6 +35,17 @@
             padding: 10px;
             text-align: left;
         }
+        .img-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .img-container img {
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -47,10 +58,12 @@
 
 <div class="date">
     <p th:text="${#dates.format(new java.util.Date(), 'dd/MM/yyyy')}">Fecha</p>
-    <p>Reporte generado por: <span th:text="${nombre_usuario}"></span></p> <!-- Mostrar nombre de usuario -->
+    <p>Reporte generado por: <span th:text="${nombre_usuario}"></span></p>
 </div>
 
-<!-- Tabla de productos -->
+<h1>Listado de productos</h1>
+
+
 <table>
     <thead>
     <tr>
@@ -67,10 +80,14 @@
         <td th:text="${producto.nombreProducto}"></td>
         <td th:text="'S/ ' + ${producto.precio}"></td>
         <td th:text="${producto.stock}"></td>
-        <td th:text="${producto.categoria.nombreCategoria}"></td> <!-- Accede al nombre de la categoría -->
+        <td th:text="${producto.categoria.nombreCategoria}"></td>
     </tr>
     </tbody>
 </table>
+
+<div class="img-container">
+    <img src="https://www.infobae.com/new-resizer/sa7tVYziWcP-ic-2nzkB-ZNgd2o=/arc-anglerfish-arc2-prod-infobae/public/5TR2YVAWAFF3XJUAYNUR2LEII4.jpg" alt="Imagen de Usuario"> <!-- Imagen del usuario centrada -->
+</div>
 
 </body>
 </html>
