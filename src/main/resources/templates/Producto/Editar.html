@@ -5,8 +5,12 @@
     <title>Editar Producto</title>
     <!-- Incluye Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/CSS/Sidebar.css">
 </head>
 <body>
+	
+	<div th:replace="/Sidebar :: Sidebar"></div>
+
     <div class="container mt-5">
         <h2 class="mb-4">Editar Producto</h2>
         <form action="/actualizar_producto" method="post" th:object="${producto}" class="needs-validation" novalidate>

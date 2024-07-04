@@ -85,13 +85,17 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/ver_producto/{id}")
-    public String verProducto(@PathVariable("id") Integer id, Model model) {
+    public String verProducto(@PathVariable("id") Integer id, Model model, HttpSession session) {
         // Obtener el producto por su ID
         ProductoEntity producto = productoService.buscarProductoPorId(id);
         if (producto == null) {
             // Manejar el caso donde el producto no existe
             return "redirect:/listado_Productos";
         }
+        
+        String correo = (String) session.getAttribute("usuario");
+	    UsuarioEntity usuario = usuarioService.buscarUsuarioPorCorreo(correo);
+	    model.addAttribute("usuario", usuario);
 
         model.addAttribute("producto", producto);
 
@@ -99,13 +103,17 @@ public class ProductoController {
     }
 	
 	@GetMapping("/editar_producto/{id}")
-    public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model) {
+    public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, HttpSession session) {
         // Obtener el producto por su ID
         ProductoEntity producto = productoService.buscarProductoPorId(id);
         if (producto == null) {
             // Manejar el caso donde el producto no existe
             return "redirect:/listado_Productos";
         }
+        
+        String correo = (String) session.getAttribute("usuario");
+	    UsuarioEntity usuario = usuarioService.buscarUsuarioPorCorreo(correo);
+	    model.addAttribute("usuario", usuario);
 
         model.addAttribute("producto", producto);
 
@@ -129,42 +137,44 @@ public class ProductoController {
     }
 	
 	@GetMapping("/generar_pdf_productos")
-    public ResponseEntity<InputStreamResource> generarPdfProductos(HttpSession session) throws IOException {
-        // Simulamos obtener el usuario logueado (reemplaza con tu lógica real)
-        UsuarioEntity usuarioLogueado = new UsuarioEntity();
-        usuarioLogueado.setNombre("nombre_usuario"); // Ajusta según cómo guardas el nombre de usuario en sesión
+	public ResponseEntity<InputStreamResource> generarPdfProductos(HttpSession session) throws IOException {
+	    // Obtener lista de productos
+	    List<ProductoEntity> productos = productoService.listaproducto();
 
-        // Obtener lista de productos
-        List<ProductoEntity> productos = productoService.listaproducto();
+	    // Preparar datos para el PDF
+	    Map<String, Object> datosPdf = new HashMap<>();
+	    datosPdf.put("productos", productos);
 
-        // Preparar datos para el PDF
-        Map<String, Object> datosPdf = new HashMap<>();
-        datosPdf.put("productos", productos);
+	    // Obtener el nombre de usuario desde la sesión
+	    String nombreUsuario = (String) session.getAttribute("nombre_usuario");
+	    if (nombreUsuario == null) {
+	        nombreUsuario = "ESTEBANDIDO"; // Valor por defecto si no hay nombre de usuario en sesión
+	    }
+	    datosPdf.put("nombre_usuario", nombreUsuario);
 
-        // Agregar nombre de usuario
-        String nombreUsuario = obtenerNombreUsuarioDesdeSesion(session, usuarioLogueado);
-        datosPdf.put("nombre_usuario", nombreUsuario);
+	    // Generar el PDF
+	    ByteArrayInputStream pdfBytes = pdfService.generarPdfDeHtml("reporteProductos", datosPdf);
 
-        // Generar el PDF
-        ByteArrayInputStream pdfBytes = pdfService.generarPdfDeHtml("reporteProductos", datosPdf);
+	    // Configurar cabeceras HTTP para la respuesta
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.add("Content-Disposition", "inline; filename=productos.pdf");
 
-        // Configurar cabeceras HTTP para la respuesta
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=productos.pdf");
+	    // Retornar la respuesta con el PDF generado
+	    return ResponseEntity.ok()
+	            .headers(headers)
+	            .contentType(MediaType.APPLICATION_PDF)
+	            .body(new InputStreamResource(pdfBytes));
+	}
 
-        // Retornar la respuesta con el PDF generado
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(pdfBytes));
-    }
 
-	private String obtenerNombreUsuarioDesdeSesion(HttpSession session, UsuarioEntity usuario) {
-        Object nombreUsuarioObj = session.getAttribute(usuario.getNombre());
+	private String obtenerNombreUsuarioDesdeSesion(HttpSession session) {
+        // Aquí debes implementar la lógica para obtener el nombre de usuario desde la sesión
+        // Por ejemplo, si guardaste el nombre de usuario con el atributo "nombre_usuario"
+        Object nombreUsuarioObj = session.getAttribute("nombre_usuario");
         if (nombreUsuarioObj != null) {
             return nombreUsuarioObj.toString();
         } else {
-            return "Usuario Ejemplo";
+            return "Esteban"; // Puedes devolver un valor por defecto si no hay usuario en sesión
         }
     }
 

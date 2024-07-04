@@ -46,8 +46,8 @@
 </header>
 
 <div class="date">
-    <p th:text="${#dates.format(new java.util.Date(), 'dd/MM/yyyy')}">19/06/2024</p>
-    <p>Reporte generado por: <span th:if="${usuario != null}" th:text="${usuario.nombre}"></span></p> <!-- Mostrar nombre de usuario -->
+    <p th:text="${#dates.format(new java.util.Date(), 'dd/MM/yyyy')}">Fecha</p>
+    <p>Reporte generado por: <span th:text="${nombre_usuario}"></span></p> <!-- Mostrar nombre de usuario -->
 </div>
 
 <!-- Tabla de productos -->
